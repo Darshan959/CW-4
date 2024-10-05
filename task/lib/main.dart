@@ -34,6 +34,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   final List<Task> _tasks = [];
   final TextEditingController _taskController = TextEditingController();
 
+  // Method to add a new task
   void _addTask() {
     if (_taskController.text.isNotEmpty) {
       setState(() {
@@ -41,6 +42,20 @@ class _TaskListScreenState extends State<TaskListScreen> {
         _taskController.clear();
       });
     }
+  }
+
+  // Method to toggle task completion status
+  void _toggleTaskCompletion(Task task) {
+    setState(() {
+      task.isCompleted = !task.isCompleted;
+    });
+  }
+
+  // Method to delete a task
+  void _deleteTask(Task task) {
+    setState(() {
+      _tasks.remove(task);
+    });
   }
 
   @override
@@ -53,6 +68,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Input field and Add button
             Row(
               children: [
                 Expanded(
@@ -71,13 +87,24 @@ class _TaskListScreenState extends State<TaskListScreen> {
               ],
             ),
             SizedBox(height: 20),
+            // Task List
             Expanded(
               child: ListView.builder(
                 itemCount: _tasks.length,
                 itemBuilder: (context, index) {
                   final task = _tasks[index];
                   return ListTile(
+                    leading: Checkbox(
+                      value: task.isCompleted,
+                      onChanged: (value) {
+                        _toggleTaskCompletion(task);
+                      },
+                    ),
                     title: Text(task.name),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () => _deleteTask(task),
+                    ),
                   );
                 },
               ),
